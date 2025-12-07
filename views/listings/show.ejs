@@ -1,0 +1,28 @@
+<%- include('../layouts/boilerplate.ejs') %>
+
+    <main style="min-height: calc(100vh - 300px); padding: 2rem 1rem;">
+                <div class="card col-8 offset-2">
+                        <% 
+                            const defaultImage = 'https://images.unsplash.com/photo-1625505826533-5c80aca7d157?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdvYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60';
+                            let imageUrl = defaultImage;
+                            if(listing.image) {
+                                if(typeof listing.image === 'string' && listing.image.trim() !== '') imageUrl = listing.image;
+                                else if(listing.image.url && String(listing.image.url).trim() !== '') imageUrl = listing.image.url;
+                            }
+                        %>
+                        <img src="<%= imageUrl %>" class="card-img-top" alt="listing image" style="height:300px;object-fit:cover;" loading="lazy" onerror="this.onerror=null;this.src='<%= defaultImage %>';">
+            <div class="card-body col-6 offset-2">
+                <h5 class="card-title"><%= listing.title %></h5>
+                <p class="card-text"><%= listing.description %></p>
+                <p class="card-text"><strong>₹<%= listing.price.toLocaleString("en-IN") %></strong></p>
+                <p class="card-text"><strong>Location:</strong> <%= listing.location %></p>
+                <p class="card-text"><strong>Country:</strong> <%= listing.country %></p>
+                <a href="/listing/<%= listing._id %>/edit" class="btn btn-warning">Edit this Listing</a>
+                <form method="post" action="/listing/<%= listing._id %>?_method=DELETE" style="display: inline;">
+                    <button class="btn btn-danger">Delete this Listing</button>
+                </form>
+            </div>
+        </div>
+    </main> 
+
+<%- include('../layouts/footer.ejs') %>

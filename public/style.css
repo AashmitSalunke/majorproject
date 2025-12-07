@@ -1,0 +1,89 @@
+/* Site-wide styles */
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	
+}
+
+/* Pink background and readable default text */
+body {
+	background: #ffb6c1; /* light pink */
+	color: #222;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	line-height: 1.4;
+}
+
+/* Optional: center main content and add subtle card styling */
+.container {
+	
+	max-width: 900px;
+	margin: 2rem auto;
+	padding: 1.25rem;
+	background: rgba(255,255,255,0.6);
+	border-radius: 8px;
+	box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* Links */
+a { color: #a10f4b; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.navbar{
+	height: 5rem;
+	background-color: white;
+}
+.fa-compass{
+	color:#fe424d;
+	font-size: 2rem;
+
+}
+.nav-link{
+	color: #222222 !important;
+}
+
+/* Footer Styling */
+footer {
+	background-color: #333;
+	color: #fff;
+	padding: 2rem 1rem;
+	margin-top: 3rem;
+	text-align: center;
+}
+
+.f-info {
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.f-info-socials {
+	margin-bottom: 1rem;
+	font-size: 2rem;
+}
+
+.f-info-socials i {
+	margin: 0 0.5rem;
+	color: #fe424d;
+	transition: color 0.3s;
+}
+
+.f-info-socials i:hover {
+	color: #ffb6c1;
+}
+
+.f-info-links {
+	margin-top: 1rem;
+	display: flex;
+	justify-content: center;
+	gap: 2rem;
+}
+
+.f-info-links a {
+	color: #fff;
+	text-decoration: none;
+	transition: color 0.3s;
+}
+
+.f-info-links a:hover {
+	color: #fe424d;
+}

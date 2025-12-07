@@ -1,0 +1,31 @@
+<%- include('../layouts/boilerplate.ejs') %>
+
+    <main style="min-height: calc(100vh - 300px); padding: 2rem 1rem;">
+        <h3>All Listings</h3>
+        <form method="get" action="/listing/new">
+            <button type="submit" class="btn btn-success">Add Place</button>
+        </form>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; margin-top:1rem;">
+          <% for(let listing of allListing) { %>
+            <% 
+              let imageUrl = 'https://images.unsplash.com/photo-1625505826533-5c80aca7d157?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdvYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60';
+              if(listing.image && listing.image.url && listing.image.url.trim() !== '') {
+                imageUrl = listing.image.url;
+              } else if(listing.image && typeof listing.image === 'string' && listing.image.trim() !== '') {
+                imageUrl = listing.image;
+              }
+            %>
+            <div class="card" style="width: 18rem;">
+                <img src="<%= imageUrl %>" class="card-img-top" alt="<%= listing.title %>" style="height: 200px; object-fit: cover; background:#eee;" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1625505826533-5c80aca7d157?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdvYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60';">
+               <div class="card-body">
+                     <h5 class="card-title"><%= listing.title %></h5>
+                     <p class="card-text"><%= listing.description %></p>
+                     <p class="card-text"><strong>₹<%= listing.price.toLocaleString("en-IN") %></strong></p>
+                     <a href="/listing/<%= listing._id %>" class="btn btn-primary">View Details</a>
+              </div>
+            </div>
+          <% } %>
+        </div>
+    </main>
+
+<%- include('../layouts/footer.ejs') %>
