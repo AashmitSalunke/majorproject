@@ -3,7 +3,12 @@ const app=express();
 const mongoose=require('mongoose');
 const Listing=require('./models/listing.js');
 const methodOverride = require('method-override');
+const ejsMate = require('ejs-mate');
 const path = require("path");
+const wrapAync=require('./utils/wrapAsync.js');
+const expressError=require('./utils/ExpressError.js');
+const {listingSchema} =require('./schema.js');
+
 const port=3000;
 main().then(()=>{
     console.log("Connected to MongoDB");
@@ -21,64 +26,78 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.engine('ejs', ejsMate);
+app.set('view engine', 'ejs');
 
-// Content Security Policy - allow external CDNs for Bootstrap, Font Awesome, etc.
-app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self';"
-  );
-  next();
-});
 
 app.get('/',(req,res)=>{
     res.redirect('/listing');
 })
+const validateListing = (req,res,next)=>{
+    const {error}=listingSchema.validate(req.body);
+    if(error){
+        let errorMsg=error.details.map(el=>el.message).join(',');
+        throw new expressError(400,errorMsg);
+    }else{
+        next();
+    }
+}
 //index route
-app.get('/listing',async(req,res)=>{
+app.get('/listing',wrapAync(async(req,res)=>{
     let allListing=await Listing.find({});
     res.render("listings/index.ejs",{allListing});
-    });
+    }));
 
     app.get('/listing/new',(req,res)=>{
         res.render('listings/new.ejs')
     })
 
     //new route
-    app.post('/listing',async (req,res)=>{
-        let newlisting=new Listing(req.body.listing);
-        await newlisting.save();
-        res.redirect('/listing');
-
-    })
+    app.post('/listing',validateListing,wrapAync(async (req,res,next)=>{
+        
+            let newlisting=new Listing(req.body.listing);
+            await newlisting.save();
+            res.redirect('/listing');
+        })
+    );
     
 
 //show route
-app.get("/listing/:id", async (req, res) => {
+app.get("/listing/:id", wrapAync(async (req, res) => {
   let { id } = req.params;
   const listing = await Listing.findById(id);
   res.render("listings/show.ejs", { listing });
-});
+}));
 
-app.get('/listing/:id/edit',async(req,res)=>{
+app.get('/listing/:id/edit',wrapAync(async(req,res)=>{
     let { id } = req.params;
     const listing = await Listing.findById(id);
     res.render('listings/edit.ejs',{ listing });
-})
+}))
 
-app.put('/listing/:id',async(req,res)=>{
+app.put('/listing/:id',validateListing,wrapAync(async(req,res)=>{
     let { id }=req.params;
     const listing=await Listing.findByIdAndUpdate(id,{...req.body.listing});
     res.redirect('/listing');
 
-})
+}))
 
-app.delete('/listing/:id',async(req,res)=>{
+app.delete('/listing/:id',wrapAync(async(req,res)=>{
      let { id }=req.params;
     const listing=await Listing.findByIdAndDelete(id);
     res.redirect('/listing');
 
-})
+}))
+
+app.use((req, res, next) => {
+    next(new expressError(404, "Page Not Found"));
+});
+
+app.use((err, req, res, next) => {
+    const { status = 500, message = "Something went wrong" } = err;
+    res.status(status).render("listings/error", { status, message });
+});
+
 
 
 app.listen(port,()=>{
