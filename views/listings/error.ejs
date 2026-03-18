@@ -1,14 +1,7 @@
 <%- include('../layouts/boilerplate.ejs') %>
-
-<div class="container mt-4">
-
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <strong>Error <%= status %>:</strong> <%= message %>
-      <button class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-
-  <a href="/listing" class="btn btn-primary">Go Back</a>
-
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error <%= status %>:</strong> <%= message %>
+    <button class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 
-
+<a href="/listing" class="btn btn-primary">Go Back</a>

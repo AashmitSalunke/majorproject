@@ -1,0 +1,49 @@
+<%- include('../layouts/boilerplate.ejs') %>
+
+<div class="row">
+    <h1 class="text-center mt-4 mb-4">Sign Up</h1>
+  <div class="col-6 offset-3">
+    <form action="/signup" method="post" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Username:</label>
+          <input name="username" id="username" placeholder="enter username" type="text" class="form-control" required />
+          <div class="invalid-feedback">Please provide a valid username.</div>
+        </div>
+
+         <div class="mb-3">
+          <label class="form-label">Email:</label>
+          <input name="email" id="email" placeholder="enter email" type="email" class="form-control" required />
+        </div>
+
+         <div class="mb-3">
+          <label class="form-label">Password:</label>
+          <input name="password" id="password" placeholder="enter password" type="password" class="form-control" required />
+          <div class="invalid-feedback">Please provide a valid password.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+        
+        <!-- Extra space added here -->
+        <div style="margin-bottom: 6rem;"></div>
+    </div>
+ </div>
+ <script>
+        (() => {
+          'use strict';
+
+          const forms = document.querySelectorAll('.needs-validation');
+
+          Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
+              form.classList.add('was-validated');
+            }, false);
+          });
+        })();
+      </script>
+
+<%- include('../includes/footer.ejs') %>

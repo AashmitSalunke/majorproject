@@ -1,13 +1,19 @@
 const express=require('express');
 const app=express();
 const mongoose=require('mongoose');
-const Listing=require('./models/listing.js');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const path = require("path");
-const wrapAync=require('./utils/wrapAsync.js');
 const expressError=require('./utils/ExpressError.js');
-const {listingSchema} =require('./schema.js');
+const listingRouter=require('./routes/listing.js');
+const reviewRouter=require('./routes/review.js');
+const userRouter=require('./routes/user.js');
+const session=require('express-session');
+const flash=require('connect-flash');
+const User=require('./models/user.js');
+const passport=require('passport');
+const LocalStrategy=require('passport-local');
+
 
 const port=3000;
 main().then(()=>{
@@ -27,67 +33,43 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.engine('ejs', ejsMate);
-app.set('view engine', 'ejs');
 
-
-app.get('/',(req,res)=>{
-    res.redirect('/listing');
-})
-const validateListing = (req,res,next)=>{
-    const {error}=listingSchema.validate(req.body);
-    if(error){
-        let errorMsg=error.details.map(el=>el.message).join(',');
-        throw new expressError(400,errorMsg);
-    }else{
-        next();
+let sessionOptions={
+    secret:"mysecretcode",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now()+7*24*60*60*1000,
+        maxAge:7*24*60*60*1000,
+        httpOnly:true,
     }
 }
-//index route
-app.get('/listing',wrapAync(async(req,res)=>{
-    let allListing=await Listing.find({});
-    res.render("listings/index.ejs",{allListing});
-    }));
-
-    app.get('/listing/new',(req,res)=>{
-        res.render('listings/new.ejs')
-    })
-
-    //new route
-    app.post('/listing',validateListing,wrapAync(async (req,res,next)=>{
-        
-            let newlisting=new Listing(req.body.listing);
-            await newlisting.save();
-            res.redirect('/listing');
-        })
-    );
-    
-
-//show route
-app.get("/listing/:id", wrapAync(async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/show.ejs", { listing });
-}));
-
-app.get('/listing/:id/edit',wrapAync(async(req,res)=>{
-    let { id } = req.params;
-    const listing = await Listing.findById(id);
-    res.render('listings/edit.ejs',{ listing });
-}))
-
-app.put('/listing/:id',validateListing,wrapAync(async(req,res)=>{
-    let { id }=req.params;
-    const listing=await Listing.findByIdAndUpdate(id,{...req.body.listing});
+app.get('/', (req, res) => {
     res.redirect('/listing');
+});
 
-}))
+app.use(session(sessionOptions));
+app.use(flash());
 
-app.delete('/listing/:id',wrapAync(async(req,res)=>{
-     let { id }=req.params;
-    const listing=await Listing.findByIdAndDelete(id);
-    res.redirect('/listing');
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-}))
+app.use((req,res,next)=>{
+    res.locals.success=req.flash('success');
+    res.locals.error=req.flash('error');
+    res.locals.currentUser=req.user;
+    next();
+})
+
+
+app.use('/listing',listingRouter);
+
+app.use('/listings/:id/reviews',reviewRouter);
+
+app.use('/',userRouter);
 
 app.use((req, res, next) => {
     next(new expressError(404, "Page Not Found"));
@@ -97,8 +79,6 @@ app.use((err, req, res, next) => {
     const { status = 500, message = "Something went wrong" } = err;
     res.status(status).render("listings/error", { status, message });
 });
-
-
 
 app.listen(port,()=>{
     console.log(`Server is running on http://localhost:${port}`);

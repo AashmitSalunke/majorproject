@@ -1,6 +1,6 @@
 /* Site-wide styles */
 html, body {
-	height: 100%;
+	height: auto;
 	margin: 0;
 	padding: 0;
 	
@@ -12,6 +12,17 @@ body {
 	color: #222;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 	line-height: 1.4;
+}
+
+/* Use flexbox to push the footer to the bottom */
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+/* Make the main content take up all available space */
+main {
+	flex: 1;
 }
 
 /* Optional: center main content and add subtle card styling */
@@ -44,16 +55,24 @@ a:hover { text-decoration: underline; }
 
 /* Footer Styling */
 footer {
-	background-color: #333;
+	background-color: #f8f9fa; /* Optional: Add a background color */
 	color: #fff;
-	padding: 2rem 1rem;
-	margin-top: 3rem;
+	padding: 10px;
 	text-align: center;
+	margin-bottom: 0;
 }
 
 .f-info {
 	max-width: 900px;
 	margin: 0 auto;
+	text-align: center;
+	padding: 1rem 0;
+}
+
+.f-info div {
+	color: #222; /* Ensure the text color contrasts with the background */
+	font-size: 1rem;
+	font-weight: bold;
 }
 
 .f-info-socials {
@@ -86,4 +105,17 @@ footer {
 
 .f-info-links a:hover {
 	color: #fe424d;
+}
+
+/* Footer links styling */
+.f-info-links {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.f-info-links a {
+    color: #a10f4b; /* Match the site-wide link color */
+    margin: 0 0.5rem;
+    font-weight: bold;
+    text-decoration: underline;
 }
