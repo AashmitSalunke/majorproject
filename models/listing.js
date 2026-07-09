@@ -26,10 +26,15 @@ const listingSchema=Schema({
             type:Schema.Types.ObjectId,
             ref:'Review',
         }
-    ]
+    ],
+    owner:{
+        type:Schema.Types.ObjectId,
+        ref:'User',
+    }
 })
 
 listingSchema.post('findOneAndDelete',async(listing)=>{
+    console.log("Listing deleted:",listing);
     if(listing){
         await review.deleteMany({_id:{$in:listing.reviews}});
     }

@@ -4,6 +4,11 @@ const Schema = mongoose.Schema;
 const passportLocalMongoose = require("passport-local-mongoose").default;
 
 const userSchema = new Schema({
+    username:{
+        type: String,
+        required: true,
+    },
+
     email: {
         type: String,
         required: true,
@@ -12,6 +17,6 @@ const userSchema = new Schema({
 });
 
 // Configure passport-local-mongoose to use email as the username field
-userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
+userSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model("User", userSchema);
