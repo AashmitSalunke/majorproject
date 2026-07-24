@@ -257,4 +257,3 @@ This project is licensed under the MIT License.
 
 GitHub: https://github.com/AashmitSalunke
 
-LinkedIn: *(Add your LinkedIn profile here)*
